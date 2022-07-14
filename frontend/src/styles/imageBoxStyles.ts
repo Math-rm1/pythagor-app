@@ -13,6 +13,7 @@ export const imageBoxStyles = {
   },
   image: {
     maxWidth: '60%',
+    zIndex: 1,
     // media queries
     '@media (max-width: 938px)': {
       marginTop: '1rem',
