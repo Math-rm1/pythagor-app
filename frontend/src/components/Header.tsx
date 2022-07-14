@@ -4,6 +4,7 @@ import { makeStyles } from '@mui/styles'
 const useStyles = makeStyles({
   header: {
     padding: '0.5rem 1rem',
+    backgroundColor: '#7584f2 !important',
   },
 })
 
@@ -11,9 +12,11 @@ export function Header() {
   const classes = useStyles()
 
   return (
-    <AppBar position="static" color="primary" className={classes.header}>
+    <AppBar component="header" position="static" className={classes.header}>
       <Toolbar>
-        <Typography variant="h6">PythagorApp</Typography>
+        <Typography sx={{ typography: { sm: 'h4', xs: 'h6' } }}>
+          PythagorApp
+        </Typography>
       </Toolbar>
     </AppBar>
   )
