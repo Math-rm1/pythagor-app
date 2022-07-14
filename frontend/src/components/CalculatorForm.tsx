@@ -1,14 +1,59 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Modal, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { calculatorFormStyles } from '../styles/calculatorFormStyles'
+import { useForm } from 'react-hook-form'
+import axios from 'axios'
+import { useState } from 'react'
 
 const useStyles = makeStyles(calculatorFormStyles)
 
+interface FormData {
+  sideA?: number
+  sideB?: number
+  sideC?: number
+}
+
+// interface ResultData extends FormData {}
+
 export default function CalculatorForm() {
   const classes = useStyles()
+  const { register, handleSubmit, reset } = useForm()
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  // const [isLoading, setIsLoading] = useState<boolean>(false)
+  // const [result, setResult] = useState<ResultData | null>(null)
+
+  const handleFormSubmit = (data: FormData) => {
+    const objArr = Object.entries(data).map(([key, value]) => {
+      if (Number.isNaN(value)) return null
+      else {
+        return {
+          key,
+          value,
+        }
+      }
+    })
+
+    const validObjArr = objArr.filter((obj) => obj !== null)
+
+    if (validObjArr.length === 2) {
+      // axios({
+      //   method: 'post',
+      //   url: '/api/calculate',
+      //   data: objArr,
+      // }).then((res) => console.log(res))
+    } else {
+      alert('Please fill 2 fields')
+    }
+
+    reset()
+  }
 
   return (
-    <Box className={classes.formBox} component="form">
+    <Box
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className={classes.formBox}
+      component="form"
+    >
       <label className={classes.formLabel} htmlFor="side-a">
         <Typography
           sx={{ typography: { sm: 'h6', xs: 'body1' } }}
@@ -20,10 +65,11 @@ export default function CalculatorForm() {
         <input
           className={classes.formLabelInput}
           type="number"
-          id="side-a"
+          id="sideA"
           placeholder="4"
-          min={0}
-          maxLength={20}
+          {...register('sideA', {
+            valueAsNumber: true,
+          })}
         />
       </label>
 
@@ -38,10 +84,11 @@ export default function CalculatorForm() {
         <input
           className={classes.formLabelInput}
           type="number"
-          id="side-b"
+          id="sideB"
           placeholder="3"
-          min={0}
-          maxLength={20}
+          {...register('sideB', {
+            valueAsNumber: true,
+          })}
         />
       </label>
 
@@ -55,16 +102,29 @@ export default function CalculatorForm() {
         <input
           className={classes.formLabelInput}
           type="number"
-          id="hyphotenuse"
+          id="sideC"
           placeholder="?"
-          min={0}
-          maxLength={20}
+          {...register('sideC', {
+            valueAsNumber: true,
+          })}
         />
       </label>
 
-      <Button className={classes.formButton} variant="contained">
+      <Button type="submit" className={classes.formButton} variant="contained">
         Calcular
       </Button>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen((state) => !state)}
+      >
+        <Box>
+          <Typography variant="h6" component="h2">
+            {/* {isLoading
+              ? 'Calculando...'
+              : `a: ${result?.sideA} b: ${result?.sideB} c: ${result?.sideC}`} */}
+          </Typography>
+        </Box>
+      </Modal>
     </Box>
   )
 }
