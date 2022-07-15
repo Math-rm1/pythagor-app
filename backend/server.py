@@ -15,26 +15,33 @@ def calculate_hypotenuse(n1, n2):
 def calculate_side(n1, n2):
     return str(sqrt(n1**2 - n2**2))
 
-@app.route('/api/calculate', methods=['POST'])
+@app.route('/', methods=['GET'])
+def index():
+    url = "https://flask-api-vert.vercel.app/api/calculate"
+    return f'<h1>Rotas disponíveis: </h1><ul><li><a href="{url}">Calculate</a></li></ul>'
+
+@app.route('/api/calculate', methods=['POST', 'GET'])
 def calculate():
-    if (request.method == 'POST'):
-        data = request.get_json()
+    if request.method == 'GET':
+        return jsonify({"message": "Use o método POST para enviar os dados"})
 
-        side_a = data['sideA']
-        side_b = data['sideB']
-        side_c = data['sideC']
+    if request.method == 'POST':
+      data = request.get_json()
 
-        print(side_a, side_b, side_c)
+      if ['values', 'relation'] != [*data]:
+        return jsonify("Ocorreu um erro: Input malformado!")
 
-        if (side_c == None) or (side_c == ''):
-            return jsonify({'sideA': side_a, 'sideB': side_b, 'sideC': calculate_hypotenuse(int(side_a), int(side_b))})
-        else:
-          if (side_a == None) or (side_a == ''):
-            return jsonify({'sideA': calculate_side(int(side_c), int(side_b)), 'sideB': side_b, 'sideC': side_c})
-          elif (side_b == None) or (side_b == ''):
-            return jsonify({'sideA': side_a, 'sideB': calculate_side(int(side_c), int(side_a)), 'sideC': side_c})
-          else:
-            return jsonify("Houve um erro")
+      values = data['values']
+      relation = data['relation']
 
-if __name__ == '__main__':
-    app.run(debug=True)
+      if len(values) != 2:
+        return jsonify("Ocorreu um erro: São necessários 2 lados para o cálculo.")
+
+      if 'side' != relation and 'hypotenuse' != relation:
+        return jsonify("Ocorreu um erro: Operação de cálculo inválida.")
+
+      if relation == 'hypotenuse':
+        return jsonify(calculate_hypotenuse(values[0], values[1]))
+      else:
+        values.sort(reverse=True)
+        return jsonify(calculate_side(values[0], values[1]))
