@@ -8,7 +8,7 @@ export const calculatorBoxStyles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid #ccc',
+    border: '1px solid #7584f2',
     borderRadius: '8px',
     boxShadow: '0 0 10px #ccc',
     gap: '2rem',

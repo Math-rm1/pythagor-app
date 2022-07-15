@@ -1,101 +1,87 @@
-import { Box, Input, Modal, Typography } from '@mui/material'
+import { Box, Input, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { calculatorFormStyles } from '../styles/calculatorFormStyles'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
-import { useState } from 'react'
 import { Button } from './Button'
+import toast, { Toaster } from 'react-hot-toast'
 
 const useStyles = makeStyles(calculatorFormStyles)
 
-const typographySx = { typography: { xs: 'body1', sm: 'h6' }, flex: 2 }
+const typographySx = {
+  typography: { xs: 'body1', sm: 'h6' },
+  flex: 2,
+}
 
-interface FormData {
+interface RightTriangle {
   sideA?: number
   sideB?: number
   sideC?: number
 }
 
-interface PostData {
+interface PostDataFormat {
   values: number[]
   relation: 'hypotenuse' | 'side'
 }
 
 export default function CalculatorForm() {
   const classes = useStyles()
-  const { register, handleSubmit, reset, setValue } = useForm()
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const { register, handleSubmit, setValue } = useForm()
   // const [isLoading, setIsLoading] = useState<boolean>(false)
-  // const [result, setResult] = useState<ResultData | null>(null)
 
   const instance = axios.create({
-    baseURL: 'https://flask-api-vert.vercel.app/',
+    baseURL: import.meta.env.VITE_BASE_URL,
   })
 
-  const postData = async (data: PostData) => {
-    const response = await instance.post('/api/calculate', data)
+  const postData = async (data: PostDataFormat) => {
+    const toastId = toast.loading('Buscando API...')
 
-    return response.data
+    const res = await instance.post('/api/calculate', data)
+
+    res.status === 200
+      ? toast.success('Busca completa!', { id: toastId })
+      : toast.error('Erro ao buscar API', { id: toastId })
+
+    return res
   }
 
-  const handleFormSubmit = (data: FormData) => {
-    const objArr = Object.entries(data).map(([key, value]) => {
-      if (Number.isNaN(value)) return { [key]: null }
-      else return { [key]: value }
-    })
+  function findNaN(entry: Array<string | number>) {
+    if (typeof entry[1] === 'number') return isNaN(entry[1])
+  }
 
-    const objArrWithoutNulls = objArr.filter(
-      (obj) => obj[Object.keys(obj)[0]] !== null,
-    )
+  function getUnknownSide(triangle: RightTriangle) {
+    const filledSides = Object.values(triangle).filter(Number) as number[]
+    const unknownSide = Object.entries(triangle).find(findNaN)?.[0]
 
-    if (objArrWithoutNulls.length === 2) {
-      const formattedGroupedObj = Object.assign(
-        Object.assign(objArr[0], objArr[1]),
-        objArr[2],
-      )
+    const lookingFor =
+      unknownSide === 'sideC'
+        ? ('hypotenuse' as PostDataFormat['relation'])
+        : ('side' as PostDataFormat['relation'])
+    return { filledSides, unknownSide, lookingFor }
+  }
 
-      if (formattedGroupedObj.sideC === null) {
-        const values = [formattedGroupedObj.sideA, formattedGroupedObj.sideB]
-        const relation = 'hypotenuse'
+  function hasZero(data: RightTriangle) {
+    return Object.values(data).includes(0)
+  }
 
-        const postObj: PostData = {
-          values,
-          relation,
-        }
+  const handleFormSubmit = async (data: RightTriangle) => {
+    if (hasZero(data))
+      return toast.error('O tamanho não pode ser zero', {
+        id: 'no-zero-allowed',
+      })
 
-        postData(postObj).then((result) => {
-          setValue('sideC', parseInt(result).toPrecision(2))
-        })
-      } else if (formattedGroupedObj.sideA === null) {
-        const values = [formattedGroupedObj.sideC, formattedGroupedObj.sideB]
-        const relation = 'side'
+    const { filledSides, unknownSide, lookingFor } = getUnknownSide(data)
 
-        const postObj: PostData = {
-          values,
-          relation,
-        }
+    if (filledSides.length !== 2)
+      return toast.error('Preencha dois campos!', { id: 'two-fields-required' })
 
-        postData(postObj).then((result) => {
-          setValue('sideA', parseInt(result).toPrecision(2))
-        })
-      } else if (formattedGroupedObj.sideB === null) {
-        const values = [formattedGroupedObj.sideA, formattedGroupedObj.sideC]
-        const relation = 'side'
+    if (!unknownSide)
+      return toast.error('Erro ao calcular um dos lados!', {
+        id: 'error-calculating-side',
+      })
 
-        const postObj: PostData = {
-          values,
-          relation,
-        }
-
-        postData(postObj).then((result) => {
-          setValue('sideB', parseInt(result).toPrecision(2))
-        })
-      }
-    } else {
-      alert('Preencha dois campos')
-    }
-
-    reset()
+    const res = await postData({ values: filledSides, relation: lookingFor })
+    setValue(unknownSide, parseInt(res.data).toPrecision(2))
   }
 
   return (
@@ -104,13 +90,14 @@ export default function CalculatorForm() {
       className={classes.formBox}
       component="form"
     >
+      <Toaster reverseOrder={true} />
       <label className={classes.formLabel} htmlFor="sideA">
         <Typography sx={typographySx} variant="h6">
           Tamanho do 1° cateto (a):
         </Typography>
         <Input
           autoFocus
-          color="secondary"
+          color="primary"
           className={classes.formLabelInput}
           type="number"
           id="sideA"
@@ -127,7 +114,7 @@ export default function CalculatorForm() {
         </Typography>
         <Input
           className={classes.formLabelInput}
-          color="secondary"
+          color="primary"
           type="number"
           id="sideB"
           placeholder="3"
@@ -143,7 +130,7 @@ export default function CalculatorForm() {
         </Typography>
         <Input
           className={classes.formLabelInput}
-          color="secondary"
+          color="primary"
           type="number"
           id="sideC"
           placeholder="?"
@@ -152,14 +139,7 @@ export default function CalculatorForm() {
           })}
         />
       </label>
-
       <Button />
-      <Modal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen((state) => !state)}
-      >
-        <Box></Box>
-      </Modal>
     </Box>
   )
 }
