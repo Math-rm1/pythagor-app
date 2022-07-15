@@ -14,6 +14,7 @@ export function Attribution() {
           '&:hover': {
             textDecoration: 'underline',
           },
+          '&:last-child': { marginBottom: '1rem' },
         },
       }}
       component="footer"
