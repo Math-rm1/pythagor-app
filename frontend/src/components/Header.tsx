@@ -11,7 +11,7 @@ export function Header() {
         <Typography
           sx={{ typography: { sm: 'h5', xs: 'h6' }, cursor: 'pointer' }}
         >
-          Teorema de Pitágoras - PythagorApp
+          PythagorApp
         </Typography>
       </Toolbar>
     </AppBar>

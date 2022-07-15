@@ -21,6 +21,7 @@ export const calculatorBoxStyles = {
     '@media (max-width: 938px)': {
       margin: '2rem 1rem 1rem 2rem',
       flexDirection: 'column',
+      gap: '3rem',
     },
     '@media (max-width: 480px)': {
       margin: '2rem .5rem',
