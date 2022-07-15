@@ -1,19 +1,38 @@
 import { Box, Link, Typography } from '@mui/material'
-import { makeStyles } from '@mui/styles'
-import { attributionStyles } from '../styles/attributionStyles'
-
-const useStyles = makeStyles(attributionStyles)
 
 export function Attribution() {
-  const classes = useStyles()
-
   return (
-    <Box className={classes.linkBox} component="footer">
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        '& a': {
+          textDecoration: 'none',
+          textAlign: 'center',
+          '&:hover': {
+            textDecoration: 'underline',
+          },
+        },
+      }}
+      component="footer"
+    >
+      <Link
+        href="https://www.linkedin.com/in/matheus-r-mariano"
+        title="Linkedin Autor"
+        target="_blank"
+      >
+        <Typography variant="caption" sx={{ color: '#7584f2' }}>
+          Site desenvolvido por <strong>Matheus</strong>
+        </Typography>
+      </Link>
       <Link
         href="https://www.flaticon.com/free-icons/pythagoras"
         title="pythagoras icons"
+        target="_blank"
       >
-        <Typography variant="caption">
+        <Typography variant="caption" sx={{ color: '#7584f2' }}>
           Pythagoras icon created by Freepik - Flaticon
         </Typography>
       </Link>

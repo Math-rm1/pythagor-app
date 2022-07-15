@@ -24,7 +24,6 @@ export default function ImageBox() {
         }}
         drag
         dragConstraints={constraintRef}
-        dragMomentum={false}
         src={logo}
         alt="Triângulo Retângulo"
         title="Triângulo Retângulo"

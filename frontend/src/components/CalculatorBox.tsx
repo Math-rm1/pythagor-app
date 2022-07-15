@@ -1,8 +1,8 @@
 import { Box } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 
 import CalculatorForm from './CalculatorForm'
 import { calculatorBoxStyles } from '../styles/calculatorBoxStyles'
-import { makeStyles } from '@mui/styles'
 import ImageBox from './ImageBox'
 
 const useStyles = makeStyles(calculatorBoxStyles)

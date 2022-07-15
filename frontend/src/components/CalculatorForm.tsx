@@ -1,8 +1,8 @@
-import { Box, Button, Modal, Typography } from '@mui/material'
+import { Box, Button, Input, Modal, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { calculatorFormStyles } from '../styles/calculatorFormStyles'
 import { useForm } from 'react-hook-form'
-import axios from 'axios'
+// import axios from 'axios'
 import { useState } from 'react'
 
 const useStyles = makeStyles(calculatorFormStyles)
@@ -24,23 +24,25 @@ export default function CalculatorForm() {
 
   const handleFormSubmit = (data: FormData) => {
     const objArr = Object.entries(data).map(([key, value]) => {
-      if (Number.isNaN(value)) return null
-      else {
-        return {
-          key,
-          value,
-        }
-      }
+      if (Number.isNaN(value)) return { [key]: null }
+      else return { [key]: value }
     })
 
-    const validObjArr = objArr.filter((obj) => obj !== null)
+    const objArrWithoutNulls = objArr.filter(
+      (obj) => obj[Object.keys(obj)[0]] !== null,
+    )
 
-    if (validObjArr.length === 2) {
+    if (objArrWithoutNulls.length === 2) {
+      const formattedGroupedObj = Object.assign(
+        Object.assign(objArr[0], objArr[1]),
+        objArr[2],
+      )
       // axios({
       //   method: 'post',
       //   url: '/api/calculate',
-      //   data: objArr,
+      //   data: JSON.stringify(formattedObjArr),
       // }).then((res) => console.log(res))
+      console.log(formattedGroupedObj)
     } else {
       alert('Please fill 2 fields')
     }
@@ -56,13 +58,17 @@ export default function CalculatorForm() {
     >
       <label className={classes.formLabel} htmlFor="side-a">
         <Typography
-          sx={{ typography: { sm: 'h6', xs: 'body1' } }}
-          className={classes.formLabelTypography}
+          sx={{
+            typography: { xs: 'body1', sm: 'h6' },
+            flex: 2,
+          }}
           variant="h6"
         >
           Tamanho do 1° cateto (a):
         </Typography>
-        <input
+        <Input
+          autoFocus
+          color="secondary"
           className={classes.formLabelInput}
           type="number"
           id="sideA"
@@ -75,14 +81,17 @@ export default function CalculatorForm() {
 
       <label className={classes.formLabel} htmlFor="side-b">
         <Typography
-          sx={{ typography: { sm: 'h6', xs: 'body1' } }}
-          className={classes.formLabelTypography}
+          sx={{
+            typography: { xs: 'body1', sm: 'h6' },
+            flex: 2,
+          }}
           variant="h6"
         >
           Tamanho do 2° cateto (b):
         </Typography>
-        <input
+        <Input
           className={classes.formLabelInput}
+          color="secondary"
           type="number"
           id="sideB"
           placeholder="3"
@@ -93,14 +102,12 @@ export default function CalculatorForm() {
       </label>
 
       <label className={classes.formLabel} htmlFor="hyphotenuse">
-        <Typography
-          sx={{ typography: { sm: 'h6', xs: 'body1' } }}
-          className={classes.formLabelTypography}
-        >
+        <Typography sx={{ typography: { xs: 'body1', sm: 'h6' }, flex: 2 }}>
           Tamanho da hipotenusa (c):
         </Typography>
-        <input
+        <Input
           className={classes.formLabelInput}
+          color="secondary"
           type="number"
           id="sideC"
           placeholder="?"
@@ -110,20 +117,26 @@ export default function CalculatorForm() {
         />
       </label>
 
-      <Button type="submit" className={classes.formButton} variant="contained">
+      <Button
+        sx={{
+          width: '100%',
+          height: '3rem',
+          backgroundColor: '#7584f2 ',
+          marginTop: '3rem',
+          '&:hover': {
+            backgroundColor: '#4253ce',
+          },
+        }}
+        type="submit"
+        variant="contained"
+      >
         Calcular
       </Button>
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen((state) => !state)}
       >
-        <Box>
-          <Typography variant="h6" component="h2">
-            {/* {isLoading
-              ? 'Calculando...'
-              : `a: ${result?.sideA} b: ${result?.sideB} c: ${result?.sideC}`} */}
-          </Typography>
-        </Box>
+        <Box></Box>
       </Modal>
     </Box>
   )

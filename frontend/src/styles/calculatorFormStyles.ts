@@ -27,28 +27,10 @@ export const calculatorFormStyles = {
       flexDirection: 'column',
     },
   },
-  formLabelTypography: {
-    flex: 2,
-    fontWeight: 'normal !important',
-  },
   formLabelInput: {
     width: '10rem',
     border: '1px solid #ccc',
     borderRadius: '8px',
     padding: '0.5rem',
-    fontSize: '1rem',
-    '&:focus': {
-      outline: 'none',
-      boxShadow: '1px 1px 1px #7584f2',
-    },
-  },
-  formButton: {
-    width: '100%',
-    height: '3rem',
-    backgroundColor: '#7584f2 !important',
-    marginTop: '3rem !important',
-    '&:hover': {
-      backgroundColor: '#4253ce !important',
-    },
   },
 }
