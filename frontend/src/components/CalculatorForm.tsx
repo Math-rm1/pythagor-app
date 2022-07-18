@@ -6,6 +6,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { Calculate, Delete } from '@mui/icons-material'
 import { useState } from 'react'
 import { styled } from '@mui/system'
+import { format } from 'mathjs'
 
 // Styled component do um formulário
 const StyledForm = styled('form')({
@@ -131,7 +132,7 @@ export default function CalculatorForm() {
       const res = await postData({ values: filledSides, relation: lookingFor })
       if (res.status === 200) {
         toast.success('Busca completa!', { id: toastId })
-        setValue(unknownSide, parseInt(res.data).toPrecision(3))
+        setValue(unknownSide, format(Number(res.data), { notation: 'fixed' }))
         toast.success('Cálculo concluído!')
       } else throw new Error()
     } catch (err) {
