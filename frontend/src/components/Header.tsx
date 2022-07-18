@@ -1,42 +1,89 @@
 import { Calculate } from '@mui/icons-material'
 import HomeIcon from '@mui/icons-material/Home'
-import { AppBar, IconButton, Toolbar, Typography } from '@mui/material'
+import {
+  AppBar,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Toolbar,
+  Typography,
+} from '@mui/material'
 import { NavLink } from 'react-router-dom'
+import MenuIcon from '@mui/icons-material/Menu'
+import { useState } from 'react'
 
 export function Header() {
+  // Estado responsável por controlar o menu
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  // Renderiza o header com o menu
   return (
-    <AppBar
-      component="header"
-      position="static"
-      sx={{ backgroundColor: '#7584f2', padding: '0.5rem 1rem' }}
-    >
-      <Toolbar>
-        <Typography
-          sx={{
-            typography: { sm: 'h5', xs: 'h6' },
-            flexGrow: 1,
-          }}
-          variant="h1"
-        >
-          PythagorApp
-        </Typography>
-        <NavLink to="/" title="Página Inicial">
+    <>
+      <AppBar
+        component="header"
+        position="static"
+        sx={{ backgroundColor: '#7584f2', p: '0.5rem', minWidth: '260px' }}
+      >
+        <Toolbar>
           <IconButton
-            aria-label="Página Inicial"
-            sx={{ color: '#fff', padding: '0.5rem' }}
+            onClick={() => setIsMenuOpen(true)}
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
           >
-            <HomeIcon />
+            <MenuIcon />
           </IconButton>
-        </NavLink>
-        <NavLink to="/calculator" title="Calculadora">
-          <IconButton
-            aria-label="Calculadora"
-            sx={{ color: '#fff', padding: '0.5rem', marginLeft: '0.5rem' }}
+          <Typography
+            sx={{ cursor: 'pointer' }}
+            fontSize={{
+              xs: '1.5rem',
+              sm: '1.75rem',
+            }}
+            fontWeight="bold"
+            component="h1"
           >
-            <Calculate />
-          </IconButton>
-        </NavLink>
-      </Toolbar>
-    </AppBar>
+            PythagorApp
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      {/* Apresentar o componente Drawer com base no estado */}
+      <Drawer open={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
+        <List>
+          <ListItem
+            button
+            component={NavLink}
+            to="/"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <ListItemText primary="Home" sx={{ p: '0.5rem' }} />
+            <IconButton
+              aria-label="Casa"
+              sx={{ color: '#7584f2', p: '0.5rem' }}
+            >
+              <HomeIcon />
+            </IconButton>
+          </ListItem>
+          <ListItem
+            button
+            component={NavLink}
+            to="/calculator"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <ListItemText primary="Calculadora" sx={{ p: '0.5rem' }} />
+            <IconButton
+              aria-label="Calculadora"
+              sx={{ color: '#7584f2', p: '0.5rem', ml: '0.5rem' }}
+            >
+              <Calculate />
+            </IconButton>
+          </ListItem>
+        </List>
+      </Drawer>
+    </>
   )
 }

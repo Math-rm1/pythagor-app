@@ -10,6 +10,5 @@ export const globalStyles = {
   },
   body: {
     backgroundColor: '#eaf2f9',
-    backgroundImage: 'linear-gradient(135deg, #eaf2f9 0%, #cecff5 100%)',
   },
 } as const
