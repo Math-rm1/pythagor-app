@@ -21,15 +21,19 @@ interface PostDataFormat {
   relation: 'hypotenuse' | 'side'
 }
 
+// Formato dos dados que virão da função getUnknownSide
 interface GetUnknownSideResponse {
   filledSides: number[]
   unknownSide: string | undefined
   lookingFor: PostDataFormat['relation']
 }
 
+// Componente que representa o formulário da calculadora
 export function CalculatorForm() {
   // Inicializando o hook do react-hook-form. O hook é responsável por gerenciar os dados do formulário. Ele retorna um objeto com métodos para manipulação dos dados.
   const { register, handleSubmit, setValue, reset } = useForm()
+
+  // Estado que faz o controle do loading
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   // Criação de uma instância do axios para requisições ao backend
@@ -45,7 +49,8 @@ export function CalculatorForm() {
   // Função que encontra o valor NaN do array de valores
   const findNaN = ([side, value]: [string, number]): boolean => isNaN(value)
 
-  // Função que por buscar o lado que não foi preenchido no formulário
+  // Função que retorna o lado que não foi preenchido no formulário, os valores que foram preenchidos
+  // e também o nome do lado que não foi preenchido
   const getUnknownSide = (triangle: RightTriangle): GetUnknownSideResponse => {
     const filledSides = Object.values(triangle).filter(Number) as number[]
     const unknownSide = Object.entries(triangle).find(findNaN)?.[0]
@@ -58,27 +63,46 @@ export function CalculatorForm() {
   }
 
   // Função que verifica se há um lado com o valor zero
-  const hasZero = (data: RightTriangle): boolean =>
-    Object.values(data).includes(0)
+  const hasZero = (data: RightTriangle): boolean => {
+    return Object.values(data).includes(0)
+  }
 
-  // Função responsável por fazer todas as verificações necessárias para o formulário ser enviado
+  // Função que verifica se há um lado maior ou igual a hipotenusa
+  const sideGreaterThanOrEqualToHypotenuse = ({
+    sideC,
+    sideA,
+    sideB,
+  }: RightTriangle): boolean =>
+    !!(Number(sideC) <= Number(sideA) || Number(sideC) <= Number(sideB))
+
+  // Função responsável por realizar todos os procedimentos necessários para os dados serem enviados
   const handleFormSubmit = async (
     data: RightTriangle,
   ): Promise<void | string> => {
+    const { filledSides, unknownSide, lookingFor } = getUnknownSide(data)
+
+    // Verificações gerais
+
     if (hasZero(data))
-      return toast.error('O lado não pode ser zero', {
+      return toast.error('O valor do lado ou hipotenusa não pode ser zero', {
         id: 'no-zero-allowed',
       })
 
-    const { filledSides, unknownSide, lookingFor } = getUnknownSide(data)
+    if (sideGreaterThanOrEqualToHypotenuse(data))
+      return toast.error(
+        'O valor do lado não pode ser maior ou igual a hipotenusa',
+        { id: 'side-greater-than-or-equal-to-hypotenuse' },
+      )
 
     if (filledSides.length !== 2)
       return toast.error('Preencha dois campos!', { id: 'two-fields-required' })
 
     if (!unknownSide)
-      return toast.error('Erro ao calcular um dos lados!', {
+      return toast.error('Erro ao calcular o valor de um dos lados!', {
         id: 'error-calculating-side',
       })
+
+    // Requisição POST ao backend
 
     const toastId = toast.loading('Buscando API...')
     try {
@@ -97,13 +121,14 @@ export function CalculatorForm() {
   }
 
   // Renderização do formulário de cálculo e dos botões
+
   return (
     <StyledForm
       data-testid="calculator-form"
       onSubmit={handleSubmit(handleFormSubmit)}
     >
       <Toaster reverseOrder={true} />
-      <StyledLabel htmlFor="sideA">
+      <StyledLabel htmlFor="sideA" data-testid="calculator-label">
         <Typography
           fontSize={{ sm: '1rem', lg: '1.25rem' }}
           flex={2}
@@ -118,8 +143,12 @@ export function CalculatorForm() {
           alignItems="center"
         >
           <StyledInput
+            inputProps={{
+              min: 0,
+            }}
             autoFocus
             color="warning"
+            data-testid="calculator-input"
             type="number"
             id="sideA"
             placeholder="Exemplo: 4"
@@ -130,7 +159,7 @@ export function CalculatorForm() {
         </Box>
       </StyledLabel>
 
-      <StyledLabel htmlFor="sideB">
+      <StyledLabel htmlFor="sideB" data-testid="calculator-label">
         <Typography
           fontSize={{ sm: '1rem', lg: '1.25rem' }}
           flex={2}
@@ -140,7 +169,11 @@ export function CalculatorForm() {
         </Typography>
         <StyledInput
           color="warning"
+          inputProps={{
+            min: 0,
+          }}
           type="number"
+          data-testid="calculator-input"
           id="sideB"
           placeholder="Exemplo: 3"
           {...register('sideB', {
@@ -149,7 +182,7 @@ export function CalculatorForm() {
         />
       </StyledLabel>
 
-      <StyledLabel htmlFor="sideC">
+      <StyledLabel htmlFor="sideC" data-testid="calculator-label">
         <Typography
           fontSize={{ sm: '1rem', lg: '1.25rem' }}
           flex={2}
@@ -159,7 +192,11 @@ export function CalculatorForm() {
         </Typography>
         <StyledInput
           color="warning"
+          inputProps={{
+            min: 0,
+          }}
           type="number"
+          data-testid="calculator-input"
           id="sideC"
           placeholder="Exemplo: 5"
           {...register('sideC', {
