@@ -28,7 +28,7 @@ const StyledCalculatorWrapper = styled('main')({
     flexDirection: 'column',
     gap: '3rem',
   },
-  [`@media (max-width: 350px)`]: {
+  [`@media (max-width: 400px)`]: {
     margin: '1rem 0.5rem 1rem 0.5rem',
     padding: '0.5rem',
   },
