@@ -23,7 +23,7 @@ def index():
 @app.route('/api/calculate', methods=['POST', 'GET'])
 def calculate():
     if request.method == 'GET':
-        return jsonify({"message": "Use o método POST para enviar os dados"})
+        return jsonify({"message": "Utilize o verbo HTTP POST para o envio de dados"})
 
     if request.method == 'POST':
       data = request.get_json()
@@ -45,3 +45,6 @@ def calculate():
       else:
         values.sort(reverse=True)
         return jsonify(calculate_side(values[0], values[1]))
+
+if __name__ == '__main__':
+    app.run(debug=True)
