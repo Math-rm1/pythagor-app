@@ -45,6 +45,8 @@ const StyledIntroductionWrapper = styled('main')({
     fontWeight: '500',
     width: '10rem',
     transition: 'all 0.2s ease-in-out',
+    boxShadow:
+      'rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px',
 
     '&:hover': {
       backgroundColor: '#4253ce',
