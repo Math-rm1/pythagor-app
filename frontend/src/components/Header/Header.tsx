@@ -22,6 +22,7 @@ export function Header() {
   return (
     <>
       <AppBar
+        data-testid="header"
         component="header"
         position="static"
         sx={{ backgroundColor: '#7584f2', p: '0.5rem', minWidth: '260px' }}

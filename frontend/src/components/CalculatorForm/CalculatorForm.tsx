@@ -1,54 +1,12 @@
-import { Box, Input, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import axios, { AxiosResponse } from 'axios'
-import { Button } from './Button'
+import { Button } from '../Button/Button'
 import toast, { Toaster } from 'react-hot-toast'
 import { Calculate, Delete } from '@mui/icons-material'
 import { useState } from 'react'
-import { styled } from '@mui/system'
 import { format } from 'mathjs'
-
-// Styled component do um formulário
-const StyledForm = styled('form')({
-  flex: 1,
-  flexShrink: 1,
-  // media queries
-  [`@media (max-width: 1300px)`]: {
-    flex: 2,
-  },
-})
-
-// Styled component de um label
-const StyledLabel = styled('label')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '1rem',
-  padding: '2rem',
-  borderLeft: '8px solid #7584f2',
-  borderRadius: '4px',
-  boxShadow: '0 0 10px #ccc',
-
-  transition: 'all 0.2s ease-in-out',
-  '&:hover, input:focus': {
-    transform: 'scale(1.025)',
-  },
-  '& + label': {
-    marginTop: '1rem',
-  },
-  // media queries
-  [`@media (max-width: 600px)`]: {
-    flexDirection: 'column',
-    padding: '1rem',
-  },
-})
-
-// Styled component de um input
-const StyledInput = styled(Input)({
-  width: '10rem',
-  border: '1px solid #ccc',
-  borderRadius: '8px',
-  padding: '0.5rem',
-})
+import { StyledForm, StyledInput, StyledLabel } from './CalculatorForm.styles'
 
 // Formato dos dados que virão do formulário
 interface RightTriangle {
@@ -69,7 +27,7 @@ interface GetUnknownSideResponse {
   lookingFor: PostDataFormat['relation']
 }
 
-export default function CalculatorForm() {
+export function CalculatorForm() {
   // Inicializando o hook do react-hook-form. O hook é responsável por gerenciar os dados do formulário. Ele retorna um objeto com métodos para manipulação dos dados.
   const { register, handleSubmit, setValue, reset } = useForm()
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -104,27 +62,23 @@ export default function CalculatorForm() {
     Object.values(data).includes(0)
 
   // Função responsável por fazer todas as verificações necessárias para o formulário ser enviado
-  const handleFormSubmit = async (data: RightTriangle): Promise<void> => {
-    if (hasZero(data)) {
-      toast.error('O lado não pode ser zero', {
+  const handleFormSubmit = async (
+    data: RightTriangle,
+  ): Promise<void | string> => {
+    if (hasZero(data))
+      return toast.error('O lado não pode ser zero', {
         id: 'no-zero-allowed',
       })
-      return
-    }
 
     const { filledSides, unknownSide, lookingFor } = getUnknownSide(data)
 
-    if (filledSides.length !== 2) {
-      toast.error('Preencha dois campos!', { id: 'two-fields-required' })
-      return
-    }
+    if (filledSides.length !== 2)
+      return toast.error('Preencha dois campos!', { id: 'two-fields-required' })
 
-    if (!unknownSide) {
-      toast.error('Erro ao calcular um dos lados!', {
+    if (!unknownSide)
+      return toast.error('Erro ao calcular um dos lados!', {
         id: 'error-calculating-side',
       })
-      return
-    }
 
     const toastId = toast.loading('Buscando API...')
     try {
@@ -144,7 +98,10 @@ export default function CalculatorForm() {
 
   // Renderização do formulário de cálculo e dos botões
   return (
-    <StyledForm onSubmit={handleSubmit(handleFormSubmit)}>
+    <StyledForm
+      data-testid="calculator-form"
+      onSubmit={handleSubmit(handleFormSubmit)}
+    >
       <Toaster reverseOrder={true} />
       <StyledLabel htmlFor="sideA">
         <Typography

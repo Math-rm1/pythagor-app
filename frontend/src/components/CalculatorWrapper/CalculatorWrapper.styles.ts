@@ -1,9 +1,7 @@
 import { styled } from '@mui/system'
-import CalculatorForm from './CalculatorForm'
-import ImageBox from './ImageWrapper'
 
 // Styled component do wrapper da calculadora
-const StyledCalculatorWrapper = styled('main')({
+export const StyledCalculatorWrapper = styled('main')({
   backgroundColor: '#F2EBFF',
   minWidth: '260px',
   padding: '2rem',
@@ -33,13 +31,3 @@ const StyledCalculatorWrapper = styled('main')({
     padding: '0.5rem',
   },
 })
-
-export function CalculatorWrapper() {
-  // Renderiza o elemento main que contém o formulário de cálculo e o logo animado com framer-motion
-  return (
-    <StyledCalculatorWrapper>
-      <ImageBox />
-      <CalculatorForm />
-    </StyledCalculatorWrapper>
-  )
-}

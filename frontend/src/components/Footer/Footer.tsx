@@ -1,25 +1,11 @@
 import { Link, Typography } from '@mui/material'
-import { styled } from '@mui/system'
-
-// Styled component do footer
-const StyledFooter = styled('footer')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  '& a': {
-    textDecoration: 'none',
-    '&:hover': {
-      textDecoration: 'underline',
-    },
-  },
-})
+import { StyledFooter } from './Footer.styles'
 
 // Simples footer com link para o linkedin e uma tag de copyright por conta do uso do ícone
 export function Footer() {
   // Renderiza o footer
   return (
-    <StyledFooter>
+    <StyledFooter data-testid="footer">
       <Link
         textAlign="center"
         href="https://www.linkedin.com/in/matheus-r-mariano"

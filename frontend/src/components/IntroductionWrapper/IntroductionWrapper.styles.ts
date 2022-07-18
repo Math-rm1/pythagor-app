@@ -1,9 +1,7 @@
-import { Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
 import { styled } from '@mui/system'
 
 // Styled component do wrapper da introdução do site
-const StyledIntroductionWrapper = styled('main')({
+export const StyledIntroductionWrapper = styled('main')({
   backgroundColor: '#F2EBFF',
   minWidth: '260px',
   padding: '2rem',
@@ -72,32 +70,3 @@ const StyledIntroductionWrapper = styled('main')({
     },
   },
 })
-
-export function IntroductionWrapper() {
-  return (
-    <StyledIntroductionWrapper>
-      <Typography variant="h5" component="h2">
-        Bem-vindo à calculadora de Pitágoras!
-      </Typography>
-      <Typography paragraph>
-        O Teorema de Pitágoras é uma simples fórmula matemática que afirma que o
-        quadrado da hipotenusa de um triângulo retângulo é igual a soma dos
-        quadrados dos outros dois lados. A fórmula é:{' '}
-        <strong>a² + b² = c²</strong> onde <strong>a</strong> é o tamanho do
-        primeiro lado, <strong>b</strong> é o tamanho do segundo lado, e{' '}
-        <strong>c</strong> é o tamanho da hipotenusa.
-      </Typography>
-
-      <Typography paragraph>
-        Para saber o resultado de um dos lados, basta preencher dois dos três
-        lados apresentados na calculadora e clicar no botão{' '}
-        <strong>Calcular</strong>.
-      </Typography>
-
-      {/* Link que redireciona para a página da calculadora */}
-      <Link title="Página da Calculadora" to="/calculator">
-        Calculadora
-      </Link>
-    </StyledIntroductionWrapper>
-  )
-}
